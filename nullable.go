@@ -7,7 +7,7 @@ type Nullable[T any] struct {
 	value T
 }
 
-func (nv Nullable[T]) GetValue() T {
+func (nv Nullable[T]) Value() T {
 	return nv.value
 }
 

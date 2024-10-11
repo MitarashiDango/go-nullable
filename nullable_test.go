@@ -6,10 +6,10 @@ import (
 	"github.com/MitarashiDango/go-nullable"
 )
 
-func Test_Nullable_GetValue_InitValue(t *testing.T) {
+func Test_Nullable_Value_InitValue(t *testing.T) {
 	var s nullable.String
 
-	if s.GetValue() != "" {
+	if s.Value() != "" {
 		t.FailNow()
 	}
 }
@@ -26,7 +26,7 @@ func Test_Nullable_SetValue(t *testing.T) {
 	var s nullable.String
 	s.SetValue("test")
 
-	if s.GetValue() != "test" {
+	if s.Value() != "test" {
 		t.FailNow()
 	}
 
@@ -40,7 +40,7 @@ func Test_Nullable_SetNull(t *testing.T) {
 	s.SetValue("test")
 	s.SetNull()
 
-	if s.GetValue() != "" {
+	if s.Value() != "" {
 		t.FailNow()
 	}
 
