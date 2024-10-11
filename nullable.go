@@ -2,6 +2,13 @@ package nullable
 
 import "encoding/json"
 
+func NewNullable[T any](value T) Nullable[T] {
+	return Nullable[T]{
+		valid: true,
+		value: value,
+	}
+}
+
 type Nullable[T any] struct {
 	valid bool
 	value T
@@ -46,6 +53,15 @@ func (nv *Nullable[T]) UnmarshalJSON(data []byte) error {
 
 	nv.valid, nv.value = true, v
 	return nil
+}
+
+func NewComparableNullable[T comparable](value T) ComparableNullable[T] {
+	return ComparableNullable[T]{
+		Nullable[T]{
+			valid: true,
+			value: value,
+		},
+	}
 }
 
 type ComparableNullable[T comparable] struct {
