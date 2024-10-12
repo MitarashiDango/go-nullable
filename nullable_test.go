@@ -49,53 +49,53 @@ func Test_Nullable_SetNull(t *testing.T) {
 	}
 }
 
-func Test_ComparableNullable_Equals_Valid_001(t *testing.T) {
+func Test_ComparableNullable_Equal_Valid_001(t *testing.T) {
 	var s1 nullable.String
 	var s2 nullable.String
 	s1.SetValue("test")
 	s2.SetValue("test")
 
-	if !s1.Equals(s2) {
+	if !s1.Equal(s2) {
 		t.FailNow()
 	}
 }
 
-func Test_ComparableNullable_Equals_Valid_002(t *testing.T) {
+func Test_ComparableNullable_Equal_Valid_002(t *testing.T) {
 	var s1 nullable.String
 	var s2 nullable.String
 
-	if !s1.Equals(s2) {
+	if !s1.Equal(s2) {
 		t.FailNow()
 	}
 }
 
-func Test_ComparableNullable_Equals_Invalid_001(t *testing.T) {
+func Test_ComparableNullable_Equal_Invalid_001(t *testing.T) {
 	var s1 nullable.String
 	var s2 nullable.String
 	s1.SetValue("test1")
 	s2.SetValue("test2")
 
-	if s1.Equals(s2) {
+	if s1.Equal(s2) {
 		t.FailNow()
 	}
 }
 
-func Test_ComparableNullable_Equals_Invalid_002(t *testing.T) {
+func Test_ComparableNullable_Equal_Invalid_002(t *testing.T) {
 	var s1 nullable.String
 	var s2 nullable.String
 	s1.SetValue("test1")
 
-	if s1.Equals(s2) {
+	if s1.Equal(s2) {
 		t.FailNow()
 	}
 }
 
-func Test_ComparableNullable_Equals_Invalid_003(t *testing.T) {
+func Test_ComparableNullable_Equal_Invalid_003(t *testing.T) {
 	var s1 nullable.String
 	var s2 nullable.String
 	s2.SetValue("test2")
 
-	if s1.Equals(s2) {
+	if s1.Equal(s2) {
 		t.FailNow()
 	}
 }
