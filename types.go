@@ -332,5 +332,5 @@ func (nv Time) Equal(value Time) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Equal(value)
+	return nv.IsNull() || nv.Value().Equal(value.Value())
 }
