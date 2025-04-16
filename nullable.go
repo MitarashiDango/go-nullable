@@ -1,6 +1,9 @@
 package nullable
 
-import "encoding/json"
+import (
+	"database/sql"
+	"encoding/json"
+)
 
 func NewNullableBase[T any](value T) NullableBase[T] {
 	return NullableBase[T]{
@@ -29,6 +32,17 @@ func (nv NullableBase[T]) IsNull() bool {
 func (nv *NullableBase[T]) SetNull() {
 	var zeroValue T
 	nv.valid, nv.value = false, zeroValue
+}
+
+func (nv NullableBase[T]) SqlNull() sql.Null[T] {
+	return sql.Null[T]{
+		V:     nv.value,
+		Valid: nv.valid,
+	}
+}
+
+func (nv *NullableBase[T]) SetSqlNull(value sql.Null[T]) {
+	nv.valid, nv.value = value.Valid, value.V
 }
 
 func (nv NullableBase[T]) MarshalJSON() ([]byte, error) {

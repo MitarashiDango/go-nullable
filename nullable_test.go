@@ -1,6 +1,7 @@
 package nullable_test
 
 import (
+	"database/sql"
 	"testing"
 
 	"github.com/MitarashiDango/go-nullable"
@@ -96,6 +97,78 @@ func Test_ComparableNullable_Equal_Invalid_003(t *testing.T) {
 	s2.SetValue("test2")
 
 	if s1.Equal(s2) {
+		t.FailNow()
+	}
+}
+
+func Test_NullableBase_SqlNull_Valid(t *testing.T) {
+	var value nullable.String
+	value.SetValue("test value")
+
+	expected := sql.Null[string]{
+		V:     "test value",
+		Valid: true,
+	}
+
+	actual := value.SqlNull()
+
+	if actual.V != expected.V {
+		t.FailNow()
+	}
+
+	if actual.Valid != expected.Valid {
+		t.FailNow()
+	}
+}
+
+func Test_NullableBase_SqlNull_Invalid(t *testing.T) {
+	var value nullable.String
+	value.SetNull()
+
+	expected := sql.Null[string]{
+		V:     "",
+		Valid: false,
+	}
+
+	actual := value.SqlNull()
+
+	if actual.V != expected.V {
+		t.FailNow()
+	}
+
+	if actual.Valid != expected.Valid {
+		t.FailNow()
+	}
+}
+
+func Test_NullableBase_SetSqlNull_Valid(t *testing.T) {
+	var value nullable.String
+	value2 := sql.Null[string]{
+		V:     "test value",
+		Valid: true,
+	}
+
+	expected := nullable.NewString("test value")
+
+	value.SetSqlNull(value2)
+
+	if !value.Equal(expected) {
+		t.FailNow()
+	}
+}
+
+func Test_NullableBase_SetSqlNull_Invalid(t *testing.T) {
+	var value nullable.String
+	value2 := sql.Null[string]{
+		V:     "",
+		Valid: false,
+	}
+
+	expected := nullable.NewNullString()
+
+	value.SetSqlNull(value2)
+
+	if !value.Equal(expected) {
 		t.FailNow()
 	}
 }
