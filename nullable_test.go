@@ -36,6 +36,52 @@ func Test_Nullable_SetValue(t *testing.T) {
 	}
 }
 
+func Test_Nullable_SetValueOrZero_Valid(t *testing.T) {
+	var s nullable.String
+	s.SetValue("test")
+
+	if s.ValueOrZero() != "test" {
+		t.FailNow()
+	}
+
+	if s.IsNull() {
+		t.FailNow()
+	}
+}
+
+func Test_Nullable_SetValueOrZero_Invalid_1(t *testing.T) {
+	var s nullable.String
+	s.SetNull()
+
+	if s.ValueOrZero() != "" {
+		t.FailNow()
+	}
+
+	if !s.IsNull() {
+		t.FailNow()
+	}
+}
+
+func Test_Nullable_SetValueOrZero_Invalid_2(t *testing.T) {
+	var s nullable.String
+	s.SetSqlNull(sql.Null[string]{
+		V:     "test",
+		Valid: false,
+	})
+
+	if s.ValueOrZero() != "" {
+		t.FailNow()
+	}
+
+	if s.Value() != "test" {
+		t.FailNow()
+	}
+
+	if !s.IsNull() {
+		t.FailNow()
+	}
+}
+
 func Test_Nullable_SetNull(t *testing.T) {
 	var s nullable.String
 	s.SetValue("test")

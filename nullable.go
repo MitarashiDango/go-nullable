@@ -13,12 +13,21 @@ func NewNullableBase[T any](value T) NullableBase[T] {
 }
 
 type NullableBase[T any] struct {
-	valid bool
-	value T
+	valid     bool
+	value     T
+	zeroValue T // ゼロ値取得用
 }
 
 func (nv NullableBase[T]) Value() T {
 	return nv.value
+}
+
+func (nv NullableBase[T]) ValueOrZero() T {
+	if nv.valid {
+		return nv.value
+	}
+
+	return nv.zeroValue
 }
 
 func (nv *NullableBase[T]) SetValue(value T) {
