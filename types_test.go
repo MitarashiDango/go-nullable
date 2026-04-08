@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/MitarashiDango/go-nullable"
+	"github.com/MitarashiDango/go-nullable/v2"
 )
 
 func TestString_Equal(t *testing.T) {

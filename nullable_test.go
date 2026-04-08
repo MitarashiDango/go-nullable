@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/MitarashiDango/go-nullable"
+	"github.com/MitarashiDango/go-nullable/v2"
 )
 
 func TestNullableBase_Value_InitValue(t *testing.T) {
