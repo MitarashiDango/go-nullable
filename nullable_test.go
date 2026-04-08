@@ -9,14 +9,6 @@ import (
 	"github.com/MitarashiDango/go-nullable/v2"
 )
 
-func TestNullableBase_Value_InitValue(t *testing.T) {
-	var s nullable.String
-
-	if s.Value() != "" {
-		t.Fatalf("expected empty string, got %q", s.Value())
-	}
-}
-
 func TestNullableBase_IsNull_InitValue(t *testing.T) {
 	var s nullable.String
 
@@ -29,8 +21,8 @@ func TestNullableBase_SetValue(t *testing.T) {
 	var s nullable.String
 	s.SetValue("test")
 
-	if s.Value() != "test" {
-		t.Fatalf("expected %q, got %q", "test", s.Value())
+	if s.RawValue() != "test" {
+		t.Fatalf("expected %q, got %q", "test", s.RawValue())
 	}
 	if s.IsNull() {
 		t.Fatal("expected IsNull() to be false")
@@ -72,9 +64,6 @@ func TestNullableBase_ValueOrZero_Null(t *testing.T) {
 		if s.ValueOrZero() != "" {
 			t.Fatalf("ValueOrZero(): expected empty string, got %q", s.ValueOrZero())
 		}
-		if s.Value() != "test" {
-			t.Fatalf("Value(): expected %q, got %q", "test", s.Value())
-		}
 		if s.RawValue() != "test" {
 			t.Fatalf("RawValue(): expected %q, got %q", "test", s.RawValue())
 		}
@@ -107,8 +96,8 @@ func TestNullableBase_SetNull(t *testing.T) {
 	s.SetValue("test")
 	s.SetNull()
 
-	if s.Value() != "" {
-		t.Fatalf("expected empty string, got %q", s.Value())
+	if s.RawValue() != "" {
+		t.Fatalf("expected empty string, got %q", s.RawValue())
 	}
 	if !s.IsNull() {
 		t.Fatal("expected IsNull() to be true")
@@ -166,6 +155,57 @@ func TestNullableBase_SetSqlNull_Null(t *testing.T) {
 	expected := nullable.NewNullString()
 	if !value.Equal(expected) {
 		t.Fatalf("expected %v, got %v", expected, value)
+	}
+}
+
+func TestNullableBase_Value_Valid(t *testing.T) {
+	s := nullable.NewString("test")
+
+	v, err := s.Value()
+	if err != nil {
+		t.Fatalf("Value() returned error: %v", err)
+	}
+	if v != "test" {
+		t.Fatalf("expected %q, got %v", "test", v)
+	}
+}
+
+func TestNullableBase_Value_Null(t *testing.T) {
+	s := nullable.NewNullString()
+
+	v, err := s.Value()
+	if err != nil {
+		t.Fatalf("Value() returned error: %v", err)
+	}
+	if v != nil {
+		t.Fatalf("expected nil, got %v", v)
+	}
+}
+
+func TestNullableBase_Scan_Valid(t *testing.T) {
+	var s nullable.String
+	if err := s.Scan("test"); err != nil {
+		t.Fatalf("Scan() returned error: %v", err)
+	}
+
+	if s.IsNull() {
+		t.Fatal("expected IsNull() to be false")
+	}
+	if s.RawValue() != "test" {
+		t.Fatalf("expected %q, got %q", "test", s.RawValue())
+	}
+}
+
+func TestNullableBase_Scan_Null(t *testing.T) {
+	var s nullable.String
+	s.SetValue("test")
+
+	if err := s.Scan(nil); err != nil {
+		t.Fatalf("Scan() returned error: %v", err)
+	}
+
+	if !s.IsNull() {
+		t.Fatal("expected IsNull() to be true")
 	}
 }
 
