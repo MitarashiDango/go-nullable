@@ -2,6 +2,7 @@ package nullable
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"encoding/json"
 )
 
@@ -17,9 +18,11 @@ type NullableBase[T any] struct {
 	value T
 }
 
-// Deprecated: Use RawValue or ValueOrZero instead.
-func (nv NullableBase[T]) Value() T {
-	return nv.RawValue()
+func (nv NullableBase[T]) Value() (driver.Value, error) {
+	if !nv.valid {
+		return nil, nil
+	}
+	return driver.DefaultParameterConverter.ConvertValue(nv.value)
 }
 
 func (nv NullableBase[T]) RawValue() T {
@@ -57,6 +60,15 @@ func (nv NullableBase[T]) SqlNull() sql.Null[T] {
 
 func (nv *NullableBase[T]) SetSqlNull(value sql.Null[T]) {
 	nv.valid, nv.value = value.Valid, value.V
+}
+
+func (nv *NullableBase[T]) Scan(src any) error {
+	var s sql.Null[T]
+	if err := s.Scan(src); err != nil {
+		return err
+	}
+	nv.SetSqlNull(s)
+	return nil
 }
 
 func (nv NullableBase[T]) MarshalJSON() ([]byte, error) {
