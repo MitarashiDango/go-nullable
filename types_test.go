@@ -2,6 +2,7 @@ package nullable_test
 
 import (
 	"encoding/json"
+	"math"
 	"testing"
 
 	"github.com/MitarashiDango/go-nullable"
@@ -1309,5 +1310,193 @@ func Test_UnmarshalJSON_NullBool(t *testing.T) {
 	if !expected.Value.Equal(actual.Value) {
 		t.Fail()
 		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
+	}
+}
+
+// Float32.EqualBits
+
+func Test_Float32_EqualBits_BothValid_SameValue(t *testing.T) {
+	v1 := nullable.NewFloat32(1.23)
+	v2 := nullable.NewFloat32(1.23)
+
+	if !v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+func Test_Float32_EqualBits_BothValid_DifferentValue(t *testing.T) {
+	v1 := nullable.NewFloat32(1.23)
+	v2 := nullable.NewFloat32(4.56)
+
+	if v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+func Test_Float32_EqualBits_BothNull(t *testing.T) {
+	v1 := nullable.NewNullFloat32()
+	v2 := nullable.NewNullFloat32()
+
+	if !v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+func Test_Float32_EqualBits_OneNull(t *testing.T) {
+	v1 := nullable.NewFloat32(1.23)
+	v2 := nullable.NewNullFloat32()
+
+	if v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+func Test_Float32_EqualBits_NaN(t *testing.T) {
+	v1 := nullable.NewFloat32(float32(math.NaN()))
+	v2 := nullable.NewFloat32(float32(math.NaN()))
+
+	if !v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+// Float64.EqualBits
+
+func Test_Float64_EqualBits_BothValid_SameValue(t *testing.T) {
+	v1 := nullable.NewFloat64(1.23)
+	v2 := nullable.NewFloat64(1.23)
+
+	if !v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+func Test_Float64_EqualBits_BothValid_DifferentValue(t *testing.T) {
+	v1 := nullable.NewFloat64(1.23)
+	v2 := nullable.NewFloat64(4.56)
+
+	if v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+func Test_Float64_EqualBits_BothNull(t *testing.T) {
+	v1 := nullable.NewNullFloat64()
+	v2 := nullable.NewNullFloat64()
+
+	if !v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+func Test_Float64_EqualBits_OneNull(t *testing.T) {
+	v1 := nullable.NewFloat64(1.23)
+	v2 := nullable.NewNullFloat64()
+
+	if v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+func Test_Float64_EqualBits_NaN(t *testing.T) {
+	v1 := nullable.NewFloat64(math.NaN())
+	v2 := nullable.NewFloat64(math.NaN())
+
+	if !v1.EqualBits(v2) {
+		t.FailNow()
+	}
+}
+
+// Float32.EqualEpsilon
+
+func Test_Float32_EqualEpsilon_WithinEpsilon(t *testing.T) {
+	v1 := nullable.NewFloat32(1.0)
+	v2 := nullable.NewFloat32(1.0001)
+
+	if !v1.EqualEpsilon(v2, 0.001) {
+		t.FailNow()
+	}
+}
+
+func Test_Float32_EqualEpsilon_OutsideEpsilon(t *testing.T) {
+	v1 := nullable.NewFloat32(1.0)
+	v2 := nullable.NewFloat32(1.01)
+
+	if v1.EqualEpsilon(v2, 0.001) {
+		t.FailNow()
+	}
+}
+
+func Test_Float32_EqualEpsilon_ExactBoundary(t *testing.T) {
+	v1 := nullable.NewFloat32(1.0)
+	v2 := nullable.NewFloat32(1.5)
+
+	if !v1.EqualEpsilon(v2, 0.5) {
+		t.FailNow()
+	}
+}
+
+func Test_Float32_EqualEpsilon_BothNull(t *testing.T) {
+	v1 := nullable.NewNullFloat32()
+	v2 := nullable.NewNullFloat32()
+
+	if !v1.EqualEpsilon(v2, 0.001) {
+		t.FailNow()
+	}
+}
+
+func Test_Float32_EqualEpsilon_OneNull(t *testing.T) {
+	v1 := nullable.NewFloat32(1.0)
+	v2 := nullable.NewNullFloat32()
+
+	if v1.EqualEpsilon(v2, 0.001) {
+		t.FailNow()
+	}
+}
+
+// Float64.EqualEpsilon
+
+func Test_Float64_EqualEpsilon_WithinEpsilon(t *testing.T) {
+	v1 := nullable.NewFloat64(1.0)
+	v2 := nullable.NewFloat64(1.0000001)
+
+	if !v1.EqualEpsilon(v2, 0.001) {
+		t.FailNow()
+	}
+}
+
+func Test_Float64_EqualEpsilon_OutsideEpsilon(t *testing.T) {
+	v1 := nullable.NewFloat64(1.0)
+	v2 := nullable.NewFloat64(1.01)
+
+	if v1.EqualEpsilon(v2, 0.001) {
+		t.FailNow()
+	}
+}
+
+func Test_Float64_EqualEpsilon_ExactBoundary(t *testing.T) {
+	v1 := nullable.NewFloat64(1.0)
+	v2 := nullable.NewFloat64(1.5)
+
+	if !v1.EqualEpsilon(v2, 0.5) {
+		t.FailNow()
+	}
+}
+
+func Test_Float64_EqualEpsilon_BothNull(t *testing.T) {
+	v1 := nullable.NewNullFloat64()
+	v2 := nullable.NewNullFloat64()
+
+	if !v1.EqualEpsilon(v2, 0.001) {
+		t.FailNow()
+	}
+}
+
+func Test_Float64_EqualEpsilon_OneNull(t *testing.T) {
+	v1 := nullable.NewFloat64(1.0)
+	v2 := nullable.NewNullFloat64()
+
+	if v1.EqualEpsilon(v2, 0.001) {
+		t.FailNow()
 	}
 }
