@@ -77,6 +77,10 @@ func Test_Nullable_SetValueOrZero_Invalid_2(t *testing.T) {
 		t.FailNow()
 	}
 
+	if s.RawValue() != "test" {
+		t.FailNow()
+	}
+
 	if !s.IsNull() {
 		t.FailNow()
 	}

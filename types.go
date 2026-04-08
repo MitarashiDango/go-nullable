@@ -24,7 +24,7 @@ func (nv String) Equal(value String) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type Int struct {
@@ -46,7 +46,7 @@ func (nv Int) Equal(value Int) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type UInt struct {
@@ -68,7 +68,7 @@ func (nv UInt) Equal(value UInt) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type Int8 struct {
@@ -90,7 +90,7 @@ func (nv Int8) Equal(value Int8) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type UInt8 struct {
@@ -112,7 +112,7 @@ func (nv UInt8) Equal(value UInt8) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type Int16 struct {
@@ -134,7 +134,7 @@ func (nv Int16) Equal(value Int16) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type UInt16 struct {
@@ -156,7 +156,7 @@ func (nv UInt16) Equal(value UInt16) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type Int32 struct {
@@ -178,7 +178,7 @@ func (nv Int32) Equal(value Int32) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type UInt32 struct {
@@ -200,7 +200,7 @@ func (nv UInt32) Equal(value UInt32) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type Int64 struct {
@@ -222,7 +222,7 @@ func (nv Int64) Equal(value Int64) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type UInt64 struct {
@@ -244,7 +244,7 @@ func (nv UInt64) Equal(value UInt64) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type Byte = UInt8
@@ -269,7 +269,7 @@ func (nv Float32) Equal(value Float32) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 func (nv Float32) EqualBits(value Float32) bool {
@@ -277,7 +277,7 @@ func (nv Float32) EqualBits(value Float32) bool {
 		return false
 	}
 
-	return nv.IsNull() || math.Float32bits(nv.Value()) == math.Float32bits(value.Value())
+	return nv.IsNull() || math.Float32bits(nv.RawValue()) == math.Float32bits(value.RawValue())
 }
 
 func (nv Float32) EqualEpsilon(value Float32, epsilon float32) bool {
@@ -289,7 +289,7 @@ func (nv Float32) EqualEpsilon(value Float32, epsilon float32) bool {
 		return true
 	}
 
-	diff := nv.Value() - value.Value()
+	diff := nv.RawValue() - value.RawValue()
 	if diff < 0 {
 		diff = -diff
 	}
@@ -315,7 +315,7 @@ func (nv Float64) Equal(value Float64) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 func (nv Float64) EqualBits(value Float64) bool {
@@ -323,7 +323,7 @@ func (nv Float64) EqualBits(value Float64) bool {
 		return false
 	}
 
-	return nv.IsNull() || math.Float64bits(nv.Value()) == math.Float64bits(value.Value())
+	return nv.IsNull() || math.Float64bits(nv.RawValue()) == math.Float64bits(value.RawValue())
 }
 
 func (nv Float64) EqualEpsilon(value Float64, epsilon float64) bool {
@@ -335,7 +335,7 @@ func (nv Float64) EqualEpsilon(value Float64, epsilon float64) bool {
 		return true
 	}
 
-	return math.Abs(nv.Value()-value.Value()) <= epsilon
+	return math.Abs(nv.RawValue()-value.RawValue()) <= epsilon
 }
 
 type Bool struct {
@@ -357,7 +357,7 @@ func (nv Bool) Equal(value Bool) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value() == value.Value()
+	return nv.IsNull() || nv.RawValue() == value.RawValue()
 }
 
 type Time struct {
@@ -379,5 +379,5 @@ func (nv Time) Equal(value Time) bool {
 		return false
 	}
 
-	return nv.IsNull() || nv.Value().Equal(value.Value())
+	return nv.IsNull() || nv.RawValue().Equal(value.RawValue())
 }
