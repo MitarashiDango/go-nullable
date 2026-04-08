@@ -1,1502 +1,451 @@
 package nullable_test
 
 import (
-	"encoding/json"
 	"math"
 	"testing"
+	"time"
 
 	"github.com/MitarashiDango/go-nullable"
 )
 
-func Test_MarshalJSON_ValidString(t *testing.T) {
-	type Test struct {
-		Value nullable.String `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewString("test value"),
-	}
-
-	expected := `{"value":"test value"}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullString(t *testing.T) {
-	type Test struct {
-		Value nullable.String `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullString(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidInt(t *testing.T) {
-	type Test struct {
-		Value nullable.Int `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewInt(-123),
-	}
-
-	expected := `{"value":-123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullInt(t *testing.T) {
-	type Test struct {
-		Value nullable.Int `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullInt(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidUInt(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewUInt(123),
-	}
-
-	expected := `{"value":123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullUInt(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullUInt(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidInt8(t *testing.T) {
-	type Test struct {
-		Value nullable.Int8 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewInt8(-123),
-	}
-
-	expected := `{"value":-123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullInt8(t *testing.T) {
-	type Test struct {
-		Value nullable.Int8 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullInt8(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidUInt8(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt8 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewUInt8(123),
-	}
-
-	expected := `{"value":123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullUInt8(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt8 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullUInt8(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidInt16(t *testing.T) {
-	type Test struct {
-		Value nullable.Int16 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewInt16(-123),
-	}
-
-	expected := `{"value":-123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullInt16(t *testing.T) {
-	type Test struct {
-		Value nullable.Int16 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullInt16(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidUInt16(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt16 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewUInt16(123),
-	}
-
-	expected := `{"value":123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullUInt16(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt16 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullUInt16(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidInt32(t *testing.T) {
-	type Test struct {
-		Value nullable.Int32 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewInt32(-123),
-	}
-
-	expected := `{"value":-123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullInt32(t *testing.T) {
-	type Test struct {
-		Value nullable.Int32 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullInt32(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidUInt32(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt32 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewUInt32(123),
-	}
-
-	expected := `{"value":123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullUInt32(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt32 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullUInt32(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidInt64(t *testing.T) {
-	type Test struct {
-		Value nullable.Int64 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewInt64(-123),
-	}
-
-	expected := `{"value":-123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullInt64(t *testing.T) {
-	type Test struct {
-		Value nullable.Int64 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullInt64(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidUInt64(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt64 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewUInt64(123),
-	}
-
-	expected := `{"value":123}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullUInt64(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt64 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullUInt64(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidFloat32(t *testing.T) {
-	type Test struct {
-		Value nullable.Float32 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewFloat32(-123.456),
-	}
-
-	expected := `{"value":-123.456}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullFloat32(t *testing.T) {
-	type Test struct {
-		Value nullable.Float32 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullFloat32(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidFloat64(t *testing.T) {
-	type Test struct {
-		Value nullable.Float64 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewFloat64(-123.456),
-	}
-
-	expected := `{"value":-123.456}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullFloat64(t *testing.T) {
-	type Test struct {
-		Value nullable.Float64 `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullFloat64(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidBool_True(t *testing.T) {
-	type Test struct {
-		Value nullable.Bool `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewBool(true),
-	}
-
-	expected := `{"value":true}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_ValidBool_False(t *testing.T) {
-	type Test struct {
-		Value nullable.Bool `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewBool(false),
-	}
-
-	expected := `{"value":false}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_MarshalJSON_NullBool(t *testing.T) {
-	type Test struct {
-		Value nullable.Bool `json:"value"`
-	}
-
-	input := &Test{
-		Value: nullable.NewNullBool(),
-	}
-
-	expected := `{"value":null}`
-
-	actual, err := json.Marshal(input)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != string(actual) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected, string(actual))
-	}
-}
-
-func Test_UnmarshalJSON_ValidString(t *testing.T) {
-	type Test struct {
-		Value nullable.String `json:"value"`
-	}
-
-	input := []byte(`{"value":"test value"}`)
-
-	var expected = Test{
-		Value: nullable.NewString("test value"),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullString(t *testing.T) {
-	type Test struct {
-		Value nullable.String `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullString(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidInt(t *testing.T) {
-	type Test struct {
-		Value nullable.Int `json:"value"`
-	}
-
-	input := []byte(`{"value":-123}`)
-
-	var expected = Test{
-		Value: nullable.NewInt(-123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullInt(t *testing.T) {
-	type Test struct {
-		Value nullable.Int `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullInt(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidUInt(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt `json:"value"`
-	}
-
-	input := []byte(`{"value":123}`)
-
-	var expected = Test{
-		Value: nullable.NewUInt(123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullUInt(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullUInt(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidInt8(t *testing.T) {
-	type Test struct {
-		Value nullable.Int8 `json:"value"`
-	}
-
-	input := []byte(`{"value":-123}`)
-
-	var expected = Test{
-		Value: nullable.NewInt8(-123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullInt8(t *testing.T) {
-	type Test struct {
-		Value nullable.Int8 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullInt8(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidUInt8(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt8 `json:"value"`
-	}
-
-	input := []byte(`{"value":123}`)
-
-	var expected = Test{
-		Value: nullable.NewUInt8(123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullUInt8(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt8 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullUInt8(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidInt16(t *testing.T) {
-	type Test struct {
-		Value nullable.Int16 `json:"value"`
-	}
-
-	input := []byte(`{"value":-123}`)
-
-	var expected = Test{
-		Value: nullable.NewInt16(-123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullInt16(t *testing.T) {
-	type Test struct {
-		Value nullable.Int16 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullInt16(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidUInt16(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt16 `json:"value"`
-	}
-
-	input := []byte(`{"value":123}`)
-
-	var expected = Test{
-		Value: nullable.NewUInt16(123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullUInt16(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt16 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullUInt16(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidInt32(t *testing.T) {
-	type Test struct {
-		Value nullable.Int32 `json:"value"`
-	}
-
-	input := []byte(`{"value":-123}`)
-
-	var expected = Test{
-		Value: nullable.NewInt32(-123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullInt32(t *testing.T) {
-	type Test struct {
-		Value nullable.Int32 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullInt32(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidUInt32(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt32 `json:"value"`
-	}
-
-	input := []byte(`{"value":123}`)
-
-	var expected = Test{
-		Value: nullable.NewUInt32(123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullUInt32(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt32 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullUInt32(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidInt64(t *testing.T) {
-	type Test struct {
-		Value nullable.Int64 `json:"value"`
-	}
-
-	input := []byte(`{"value":-123}`)
-
-	var expected = Test{
-		Value: nullable.NewInt64(-123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullInt64(t *testing.T) {
-	type Test struct {
-		Value nullable.Int64 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullInt64(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidUInt64(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt64 `json:"value"`
-	}
-
-	input := []byte(`{"value":123}`)
-
-	var expected = Test{
-		Value: nullable.NewUInt64(123),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullUInt64(t *testing.T) {
-	type Test struct {
-		Value nullable.UInt64 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullUInt64(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidFloat32(t *testing.T) {
-	type Test struct {
-		Value nullable.Float32 `json:"value"`
-	}
-
-	input := []byte(`{"value":-123.456}`)
-
-	var expected = Test{
-		Value: nullable.NewFloat32(-123.456),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullFloat32(t *testing.T) {
-	type Test struct {
-		Value nullable.Float32 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullFloat32(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidFloat64(t *testing.T) {
-	type Test struct {
-		Value nullable.Float64 `json:"value"`
-	}
-
-	input := []byte(`{"value":-123.456}`)
-
-	var expected = Test{
-		Value: nullable.NewFloat64(-123.456),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullFloat64(t *testing.T) {
-	type Test struct {
-		Value nullable.Float64 `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullFloat64(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidBool_True(t *testing.T) {
-	type Test struct {
-		Value nullable.Bool `json:"value"`
-	}
-
-	input := []byte(`{"value":true}`)
-
-	var expected = Test{
-		Value: nullable.NewBool(true),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_ValidBool_False(t *testing.T) {
-	type Test struct {
-		Value nullable.Bool `json:"value"`
-	}
-
-	input := []byte(`{"value":false}`)
-
-	var expected = Test{
-		Value: nullable.NewBool(false),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-func Test_UnmarshalJSON_NullBool(t *testing.T) {
-	type Test struct {
-		Value nullable.Bool `json:"value"`
-	}
-
-	input := []byte(`{"value":null}`)
-
-	var expected = Test{
-		Value: nullable.NewNullBool(),
-	}
-
-	var actual Test
-	err := json.Unmarshal(input, &actual)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !expected.Value.Equal(actual.Value) {
-		t.Fail()
-		t.Logf("expected: %v, actual: %v", expected.Value, actual.Value)
-	}
-}
-
-// Float32.EqualBits
-
-func Test_Float32_EqualBits_BothValid_SameValue(t *testing.T) {
-	v1 := nullable.NewFloat32(1.23)
-	v2 := nullable.NewFloat32(1.23)
-
-	if !v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-func Test_Float32_EqualBits_BothValid_DifferentValue(t *testing.T) {
-	v1 := nullable.NewFloat32(1.23)
-	v2 := nullable.NewFloat32(4.56)
-
-	if v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-func Test_Float32_EqualBits_BothNull(t *testing.T) {
-	v1 := nullable.NewNullFloat32()
-	v2 := nullable.NewNullFloat32()
-
-	if !v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-func Test_Float32_EqualBits_OneNull(t *testing.T) {
-	v1 := nullable.NewFloat32(1.23)
-	v2 := nullable.NewNullFloat32()
-
-	if v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-func Test_Float32_EqualBits_NaN(t *testing.T) {
-	v1 := nullable.NewFloat32(float32(math.NaN()))
-	v2 := nullable.NewFloat32(float32(math.NaN()))
-
-	if !v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-// Float64.EqualBits
-
-func Test_Float64_EqualBits_BothValid_SameValue(t *testing.T) {
-	v1 := nullable.NewFloat64(1.23)
-	v2 := nullable.NewFloat64(1.23)
-
-	if !v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-func Test_Float64_EqualBits_BothValid_DifferentValue(t *testing.T) {
-	v1 := nullable.NewFloat64(1.23)
-	v2 := nullable.NewFloat64(4.56)
-
-	if v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-func Test_Float64_EqualBits_BothNull(t *testing.T) {
-	v1 := nullable.NewNullFloat64()
-	v2 := nullable.NewNullFloat64()
-
-	if !v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-func Test_Float64_EqualBits_OneNull(t *testing.T) {
-	v1 := nullable.NewFloat64(1.23)
-	v2 := nullable.NewNullFloat64()
-
-	if v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-func Test_Float64_EqualBits_NaN(t *testing.T) {
-	v1 := nullable.NewFloat64(math.NaN())
-	v2 := nullable.NewFloat64(math.NaN())
-
-	if !v1.EqualBits(v2) {
-		t.FailNow()
-	}
-}
-
-// Float32.EqualEpsilon
-
-func Test_Float32_EqualEpsilon_WithinEpsilon(t *testing.T) {
-	v1 := nullable.NewFloat32(1.0)
-	v2 := nullable.NewFloat32(1.0001)
-
-	if !v1.EqualEpsilon(v2, 0.001) {
-		t.FailNow()
-	}
-}
-
-func Test_Float32_EqualEpsilon_OutsideEpsilon(t *testing.T) {
-	v1 := nullable.NewFloat32(1.0)
-	v2 := nullable.NewFloat32(1.01)
-
-	if v1.EqualEpsilon(v2, 0.001) {
-		t.FailNow()
-	}
-}
-
-func Test_Float32_EqualEpsilon_ExactBoundary(t *testing.T) {
-	v1 := nullable.NewFloat32(1.0)
-	v2 := nullable.NewFloat32(1.5)
-
-	if !v1.EqualEpsilon(v2, 0.5) {
-		t.FailNow()
-	}
-}
-
-func Test_Float32_EqualEpsilon_BothNull(t *testing.T) {
-	v1 := nullable.NewNullFloat32()
-	v2 := nullable.NewNullFloat32()
-
-	if !v1.EqualEpsilon(v2, 0.001) {
-		t.FailNow()
-	}
-}
-
-func Test_Float32_EqualEpsilon_OneNull(t *testing.T) {
-	v1 := nullable.NewFloat32(1.0)
-	v2 := nullable.NewNullFloat32()
-
-	if v1.EqualEpsilon(v2, 0.001) {
-		t.FailNow()
-	}
-}
-
-// Float64.EqualEpsilon
-
-func Test_Float64_EqualEpsilon_WithinEpsilon(t *testing.T) {
-	v1 := nullable.NewFloat64(1.0)
-	v2 := nullable.NewFloat64(1.0000001)
-
-	if !v1.EqualEpsilon(v2, 0.001) {
-		t.FailNow()
-	}
-}
-
-func Test_Float64_EqualEpsilon_OutsideEpsilon(t *testing.T) {
-	v1 := nullable.NewFloat64(1.0)
-	v2 := nullable.NewFloat64(1.01)
-
-	if v1.EqualEpsilon(v2, 0.001) {
-		t.FailNow()
-	}
-}
-
-func Test_Float64_EqualEpsilon_ExactBoundary(t *testing.T) {
-	v1 := nullable.NewFloat64(1.0)
-	v2 := nullable.NewFloat64(1.5)
-
-	if !v1.EqualEpsilon(v2, 0.5) {
-		t.FailNow()
-	}
-}
-
-func Test_Float64_EqualEpsilon_BothNull(t *testing.T) {
-	v1 := nullable.NewNullFloat64()
-	v2 := nullable.NewNullFloat64()
-
-	if !v1.EqualEpsilon(v2, 0.001) {
-		t.FailNow()
-	}
-}
-
-func Test_Float64_EqualEpsilon_OneNull(t *testing.T) {
-	v1 := nullable.NewFloat64(1.0)
-	v2 := nullable.NewNullFloat64()
-
-	if v1.EqualEpsilon(v2, 0.001) {
-		t.FailNow()
+func TestString_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.String
+		v2       nullable.String
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewString("test"), nullable.NewString("test"), true},
+		{"BothNull", nullable.NewNullString(), nullable.NewNullString(), true},
+		{"BothValid_DifferentValue", nullable.NewString("test1"), nullable.NewString("test2"), false},
+		{"ValidAndNull", nullable.NewString("test1"), nullable.NewNullString(), false},
+		{"NullAndValid", nullable.NewNullString(), nullable.NewString("test2"), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestInt_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Int
+		v2       nullable.Int
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewInt(123), nullable.NewInt(123), true},
+		{"BothNull", nullable.NewNullInt(), nullable.NewNullInt(), true},
+		{"BothValid_DifferentValue", nullable.NewInt(123), nullable.NewInt(456), false},
+		{"ValidAndNull", nullable.NewInt(123), nullable.NewNullInt(), false},
+		{"NullAndValid", nullable.NewNullInt(), nullable.NewInt(123), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestUInt_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.UInt
+		v2       nullable.UInt
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewUInt(123), nullable.NewUInt(123), true},
+		{"BothNull", nullable.NewNullUInt(), nullable.NewNullUInt(), true},
+		{"BothValid_DifferentValue", nullable.NewUInt(123), nullable.NewUInt(456), false},
+		{"ValidAndNull", nullable.NewUInt(123), nullable.NewNullUInt(), false},
+		{"NullAndValid", nullable.NewNullUInt(), nullable.NewUInt(123), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestInt8_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Int8
+		v2       nullable.Int8
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewInt8(12), nullable.NewInt8(12), true},
+		{"BothNull", nullable.NewNullInt8(), nullable.NewNullInt8(), true},
+		{"BothValid_DifferentValue", nullable.NewInt8(12), nullable.NewInt8(34), false},
+		{"ValidAndNull", nullable.NewInt8(12), nullable.NewNullInt8(), false},
+		{"NullAndValid", nullable.NewNullInt8(), nullable.NewInt8(12), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestUInt8_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.UInt8
+		v2       nullable.UInt8
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewUInt8(12), nullable.NewUInt8(12), true},
+		{"BothNull", nullable.NewNullUInt8(), nullable.NewNullUInt8(), true},
+		{"BothValid_DifferentValue", nullable.NewUInt8(12), nullable.NewUInt8(34), false},
+		{"ValidAndNull", nullable.NewUInt8(12), nullable.NewNullUInt8(), false},
+		{"NullAndValid", nullable.NewNullUInt8(), nullable.NewUInt8(12), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestInt16_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Int16
+		v2       nullable.Int16
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewInt16(123), nullable.NewInt16(123), true},
+		{"BothNull", nullable.NewNullInt16(), nullable.NewNullInt16(), true},
+		{"BothValid_DifferentValue", nullable.NewInt16(123), nullable.NewInt16(456), false},
+		{"ValidAndNull", nullable.NewInt16(123), nullable.NewNullInt16(), false},
+		{"NullAndValid", nullable.NewNullInt16(), nullable.NewInt16(123), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestUInt16_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.UInt16
+		v2       nullable.UInt16
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewUInt16(123), nullable.NewUInt16(123), true},
+		{"BothNull", nullable.NewNullUInt16(), nullable.NewNullUInt16(), true},
+		{"BothValid_DifferentValue", nullable.NewUInt16(123), nullable.NewUInt16(456), false},
+		{"ValidAndNull", nullable.NewUInt16(123), nullable.NewNullUInt16(), false},
+		{"NullAndValid", nullable.NewNullUInt16(), nullable.NewUInt16(123), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestInt32_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Int32
+		v2       nullable.Int32
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewInt32(123), nullable.NewInt32(123), true},
+		{"BothNull", nullable.NewNullInt32(), nullable.NewNullInt32(), true},
+		{"BothValid_DifferentValue", nullable.NewInt32(123), nullable.NewInt32(456), false},
+		{"ValidAndNull", nullable.NewInt32(123), nullable.NewNullInt32(), false},
+		{"NullAndValid", nullable.NewNullInt32(), nullable.NewInt32(123), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestUInt32_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.UInt32
+		v2       nullable.UInt32
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewUInt32(123), nullable.NewUInt32(123), true},
+		{"BothNull", nullable.NewNullUInt32(), nullable.NewNullUInt32(), true},
+		{"BothValid_DifferentValue", nullable.NewUInt32(123), nullable.NewUInt32(456), false},
+		{"ValidAndNull", nullable.NewUInt32(123), nullable.NewNullUInt32(), false},
+		{"NullAndValid", nullable.NewNullUInt32(), nullable.NewUInt32(123), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestInt64_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Int64
+		v2       nullable.Int64
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewInt64(123), nullable.NewInt64(123), true},
+		{"BothNull", nullable.NewNullInt64(), nullable.NewNullInt64(), true},
+		{"BothValid_DifferentValue", nullable.NewInt64(123), nullable.NewInt64(456), false},
+		{"ValidAndNull", nullable.NewInt64(123), nullable.NewNullInt64(), false},
+		{"NullAndValid", nullable.NewNullInt64(), nullable.NewInt64(123), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestUInt64_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.UInt64
+		v2       nullable.UInt64
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewUInt64(123), nullable.NewUInt64(123), true},
+		{"BothNull", nullable.NewNullUInt64(), nullable.NewNullUInt64(), true},
+		{"BothValid_DifferentValue", nullable.NewUInt64(123), nullable.NewUInt64(456), false},
+		{"ValidAndNull", nullable.NewUInt64(123), nullable.NewNullUInt64(), false},
+		{"NullAndValid", nullable.NewNullUInt64(), nullable.NewUInt64(123), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestFloat32_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Float32
+		v2       nullable.Float32
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewFloat32(1.23), nullable.NewFloat32(1.23), true},
+		{"BothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), true},
+		{"BothValid_DifferentValue", nullable.NewFloat32(1.23), nullable.NewFloat32(4.56), false},
+		{"ValidAndNull", nullable.NewFloat32(1.23), nullable.NewNullFloat32(), false},
+		{"NullAndValid", nullable.NewNullFloat32(), nullable.NewFloat32(1.23), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestFloat64_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Float64
+		v2       nullable.Float64
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewFloat64(1.23), nullable.NewFloat64(1.23), true},
+		{"BothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), true},
+		{"BothValid_DifferentValue", nullable.NewFloat64(1.23), nullable.NewFloat64(4.56), false},
+		{"ValidAndNull", nullable.NewFloat64(1.23), nullable.NewNullFloat64(), false},
+		{"NullAndValid", nullable.NewNullFloat64(), nullable.NewFloat64(1.23), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestBool_Equal(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Bool
+		v2       nullable.Bool
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewBool(true), nullable.NewBool(true), true},
+		{"BothNull", nullable.NewNullBool(), nullable.NewNullBool(), true},
+		{"BothValid_DifferentValue", nullable.NewBool(true), nullable.NewBool(false), false},
+		{"ValidAndNull", nullable.NewBool(true), nullable.NewNullBool(), false},
+		{"NullAndValid", nullable.NewNullBool(), nullable.NewBool(true), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestTime_Equal(t *testing.T) {
+	t1 := time.Date(2025, 6, 1, 12, 0, 0, 0, time.UTC)
+	t2 := time.Date(2025, 6, 2, 12, 0, 0, 0, time.UTC)
+
+	tests := []struct {
+		name     string
+		v1       nullable.Time
+		v2       nullable.Time
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewTime(t1), nullable.NewTime(t1), true},
+		{"BothNull", nullable.NewNullTime(), nullable.NewNullTime(), true},
+		{"BothValid_DifferentValue", nullable.NewTime(t1), nullable.NewTime(t2), false},
+		{"ValidAndNull", nullable.NewTime(t1), nullable.NewNullTime(), false},
+		{"NullAndValid", nullable.NewNullTime(), nullable.NewTime(t1), false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.Equal(tt.v2); got != tt.expected {
+				t.Fatalf("Equal() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestFloat32_EqualBits(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Float32
+		v2       nullable.Float32
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewFloat32(1.23), nullable.NewFloat32(1.23), true},
+		{"BothValid_DifferentValue", nullable.NewFloat32(1.23), nullable.NewFloat32(4.56), false},
+		{"BothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), true},
+		{"OneNull", nullable.NewFloat32(1.23), nullable.NewNullFloat32(), false},
+		{"NaN", nullable.NewFloat32(float32(math.NaN())), nullable.NewFloat32(float32(math.NaN())), true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.EqualBits(tt.v2); got != tt.expected {
+				t.Fatalf("EqualBits() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestFloat64_EqualBits(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Float64
+		v2       nullable.Float64
+		expected bool
+	}{
+		{"BothValid_SameValue", nullable.NewFloat64(1.23), nullable.NewFloat64(1.23), true},
+		{"BothValid_DifferentValue", nullable.NewFloat64(1.23), nullable.NewFloat64(4.56), false},
+		{"BothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), true},
+		{"OneNull", nullable.NewFloat64(1.23), nullable.NewNullFloat64(), false},
+		{"NaN", nullable.NewFloat64(math.NaN()), nullable.NewFloat64(math.NaN()), true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.EqualBits(tt.v2); got != tt.expected {
+				t.Fatalf("EqualBits() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestFloat32_EqualEpsilon(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Float32
+		v2       nullable.Float32
+		epsilon  float32
+		expected bool
+	}{
+		{"WithinEpsilon", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0001), 0.001, true},
+		{"OutsideEpsilon", nullable.NewFloat32(1.0), nullable.NewFloat32(1.01), 0.001, false},
+		{"ExactBoundary", nullable.NewFloat32(1.0), nullable.NewFloat32(1.5), 0.5, true},
+		{"BothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), 0.001, true},
+		{"OneNull", nullable.NewFloat32(1.0), nullable.NewNullFloat32(), 0.001, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.EqualEpsilon(tt.v2, tt.epsilon); got != tt.expected {
+				t.Fatalf("EqualEpsilon() = %v, expected %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestFloat64_EqualEpsilon(t *testing.T) {
+	tests := []struct {
+		name     string
+		v1       nullable.Float64
+		v2       nullable.Float64
+		epsilon  float64
+		expected bool
+	}{
+		{"WithinEpsilon", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0000001), 0.001, true},
+		{"OutsideEpsilon", nullable.NewFloat64(1.0), nullable.NewFloat64(1.01), 0.001, false},
+		{"ExactBoundary", nullable.NewFloat64(1.0), nullable.NewFloat64(1.5), 0.5, true},
+		{"BothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), 0.001, true},
+		{"OneNull", nullable.NewFloat64(1.0), nullable.NewNullFloat64(), 0.001, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.v1.EqualEpsilon(tt.v2, tt.epsilon); got != tt.expected {
+				t.Fatalf("EqualEpsilon() = %v, expected %v", got, tt.expected)
+			}
+		})
 	}
 }
