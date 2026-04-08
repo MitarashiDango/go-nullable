@@ -1,6 +1,9 @@
 package nullable
 
-import "time"
+import (
+	"math"
+	"time"
+)
 
 type String struct {
 	NullableBase[string]
@@ -269,6 +272,30 @@ func (nv Float32) Equal(value Float32) bool {
 	return nv.IsNull() || nv.Value() == value.Value()
 }
 
+func (nv Float32) EqualBits(value Float32) bool {
+	if nv.IsNull() != value.IsNull() {
+		return false
+	}
+
+	return nv.IsNull() || math.Float32bits(nv.Value()) == math.Float32bits(value.Value())
+}
+
+func (nv Float32) EqualEpsilon(value Float32, epsilon float32) bool {
+	if nv.IsNull() != value.IsNull() {
+		return false
+	}
+
+	if nv.IsNull() {
+		return true
+	}
+
+	diff := nv.Value() - value.Value()
+	if diff < 0 {
+		diff = -diff
+	}
+	return diff <= epsilon
+}
+
 type Float64 struct {
 	NullableBase[float64]
 }
@@ -289,6 +316,26 @@ func (nv Float64) Equal(value Float64) bool {
 	}
 
 	return nv.IsNull() || nv.Value() == value.Value()
+}
+
+func (nv Float64) EqualBits(value Float64) bool {
+	if nv.IsNull() != value.IsNull() {
+		return false
+	}
+
+	return nv.IsNull() || math.Float64bits(nv.Value()) == math.Float64bits(value.Value())
+}
+
+func (nv Float64) EqualEpsilon(value Float64, epsilon float64) bool {
+	if nv.IsNull() != value.IsNull() {
+		return false
+	}
+
+	if nv.IsNull() {
+		return true
+	}
+
+	return math.Abs(nv.Value()-value.Value()) <= epsilon
 }
 
 type Bool struct {
