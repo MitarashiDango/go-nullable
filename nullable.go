@@ -17,7 +17,12 @@ type NullableBase[T any] struct {
 	value T
 }
 
+// Deprecated: Use RawValue or ValueOrZero instead.
 func (nv NullableBase[T]) Value() T {
+	return nv.RawValue()
+}
+
+func (nv NullableBase[T]) RawValue() T {
 	return nv.value
 }
 
