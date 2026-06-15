@@ -333,7 +333,12 @@ func (nv Float32) EqualBits(value Float32) bool {
 }
 
 // EqualEpsilon reports whether nv and value are both null or differ by at most epsilon.
+// It panics if epsilon is negative or NaN.
 func (nv Float32) EqualEpsilon(value Float32, epsilon float32) bool {
+	if epsilon < 0 || math.IsNaN(float64(epsilon)) {
+		panic("nullable: invalid epsilon")
+	}
+
 	if nv.IsNull() != value.IsNull() {
 		return false
 	}
@@ -385,7 +390,12 @@ func (nv Float64) EqualBits(value Float64) bool {
 }
 
 // EqualEpsilon reports whether nv and value are both null or differ by at most epsilon.
+// It panics if epsilon is negative or NaN.
 func (nv Float64) EqualEpsilon(value Float64, epsilon float64) bool {
+	if epsilon < 0 || math.IsNaN(epsilon) {
+		panic("nullable: invalid epsilon")
+	}
+
 	if nv.IsNull() != value.IsNull() {
 		return false
 	}
