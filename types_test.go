@@ -413,6 +413,8 @@ func TestFloat32_EqualEpsilon(t *testing.T) {
 		{"WithinEpsilon", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0001), 0.001, true},
 		{"OutsideEpsilon", nullable.NewFloat32(1.0), nullable.NewFloat32(1.01), 0.001, false},
 		{"ExactBoundary", nullable.NewFloat32(1.0), nullable.NewFloat32(1.5), 0.5, true},
+		{"ZeroEpsilonSameValue", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0), 0, true},
+		{"ZeroEpsilonDifferentValue", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0001), 0, false},
 		{"BothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), 0.001, true},
 		{"OneNull", nullable.NewFloat32(1.0), nullable.NewNullFloat32(), 0.001, false},
 	}
@@ -422,6 +424,24 @@ func TestFloat32_EqualEpsilon(t *testing.T) {
 			if got := tt.v1.EqualEpsilon(tt.v2, tt.epsilon); got != tt.expected {
 				t.Fatalf("EqualEpsilon() = %v, expected %v", got, tt.expected)
 			}
+		})
+	}
+}
+
+func TestFloat32_EqualEpsilon_InvalidEpsilonPanics(t *testing.T) {
+	tests := []struct {
+		name    string
+		epsilon float32
+	}{
+		{"Negative", -0.001},
+		{"NaN", float32(math.NaN())},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assertPanics(t, func() {
+				nullable.NewFloat32(1.0).EqualEpsilon(nullable.NewFloat32(1.0), tt.epsilon)
+			})
 		})
 	}
 }
@@ -437,6 +457,8 @@ func TestFloat64_EqualEpsilon(t *testing.T) {
 		{"WithinEpsilon", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0000001), 0.001, true},
 		{"OutsideEpsilon", nullable.NewFloat64(1.0), nullable.NewFloat64(1.01), 0.001, false},
 		{"ExactBoundary", nullable.NewFloat64(1.0), nullable.NewFloat64(1.5), 0.5, true},
+		{"ZeroEpsilonSameValue", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0), 0, true},
+		{"ZeroEpsilonDifferentValue", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0000001), 0, false},
 		{"BothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), 0.001, true},
 		{"OneNull", nullable.NewFloat64(1.0), nullable.NewNullFloat64(), 0.001, false},
 	}
@@ -448,4 +470,34 @@ func TestFloat64_EqualEpsilon(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestFloat64_EqualEpsilon_InvalidEpsilonPanics(t *testing.T) {
+	tests := []struct {
+		name    string
+		epsilon float64
+	}{
+		{"Negative", -0.001},
+		{"NaN", math.NaN()},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assertPanics(t, func() {
+				nullable.NewFloat64(1.0).EqualEpsilon(nullable.NewFloat64(1.0), tt.epsilon)
+			})
+		})
+	}
+}
+
+func assertPanics(t *testing.T, f func()) {
+	t.Helper()
+
+	defer func() {
+		if recover() == nil {
+			t.Fatal("expected panic")
+		}
+	}()
+
+	f()
 }
