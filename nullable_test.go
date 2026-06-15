@@ -64,8 +64,8 @@ func TestNullableBase_ValueOrZero_Null(t *testing.T) {
 		if s.ValueOrZero() != "" {
 			t.Fatalf("ValueOrZero(): expected empty string, got %q", s.ValueOrZero())
 		}
-		if s.RawValue() != "test" {
-			t.Fatalf("RawValue(): expected %q, got %q", "test", s.RawValue())
+		if s.RawValue() != "" {
+			t.Fatalf("RawValue(): expected empty string, got %q", s.RawValue())
 		}
 		if !s.IsNull() {
 			t.Fatal("expected IsNull() to be true")

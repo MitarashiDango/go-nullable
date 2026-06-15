@@ -70,7 +70,12 @@ func (nv NullableBase[T]) SqlNull() sql.Null[T] {
 
 // SetSqlNull stores the value and null state from sql.Null.
 func (nv *NullableBase[T]) SetSqlNull(value sql.Null[T]) {
-	nv.valid, nv.value = value.Valid, value.V
+	if !value.Valid {
+		nv.SetNull()
+		return
+	}
+
+	nv.SetValue(value.V)
 }
 
 // Scan stores a database value using sql.Null scanning rules.
