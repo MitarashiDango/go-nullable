@@ -1,6 +1,8 @@
 name: CI - Test
 
 on:
+  workflow_dispatch:
+
   push:
     branches:
       - master
@@ -17,15 +19,33 @@ on:
       - "go.sum"
       - ".github/workflows/ci-test.yml"
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-test-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   golang-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version-file: "go.mod"
           cache: true
+      - name: Check module files
+        run: |
+          go mod tidy
+          if [ -n "$(git status --porcelain -- go.mod go.sum)" ]; then
+            git status --short -- go.mod go.sum
+            exit 1
+          fi
       - name: Build
-        run: go build
-      - run: go test ./... -v
+        run: go build ./...
+      - name: Test
+        run: go test ./... -v
+      - name: Vet
+        run: go vet ./...
