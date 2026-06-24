@@ -1,0 +1,99 @@
+name: Release Check
+
+on:
+  push:
+    tags:
+      - "v*"
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to check, such as v2.0.0"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-check-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      MODULE_BASE: github.com/MitarashiDango/go-nullable
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: "go.mod"
+          cache: true
+
+      - name: Check tag and module path
+        id: release
+        run: |
+          tag="$RELEASE_TAG"
+          if ! printf '%s\n' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::tag must be a canonical Go module version like v2.0.0"
+            exit 1
+          fi
+
+          version="${tag#v}"
+          major="${version%%.*}"
+          module_path="$(go list -m)"
+
+          if [ "$major" = "0" ] || [ "$major" = "1" ]; then
+            expected_module_path="$MODULE_BASE"
+          else
+            expected_module_path="$MODULE_BASE/v$major"
+          fi
+
+          if [ "$module_path" != "$expected_module_path" ]; then
+            echo "::error::tag $tag requires module path $expected_module_path, but go.mod declares $module_path"
+            exit 1
+          fi
+
+          printf 'tag=%s\n' "$tag" >> "$GITHUB_OUTPUT"
+          printf 'module_path=%s\n' "$module_path" >> "$GITHUB_OUTPUT"
+
+      - name: Check module files
+        run: |
+          go mod tidy
+          if [ -n "$(git status --porcelain -- go.mod go.sum)" ]; then
+            git status --short -- go.mod go.sum
+            exit 1
+          fi
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./... -v
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Check Go proxy
+        env:
+          MODULE_PATH: ${{ steps.release.outputs.module_path }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          module_version="${MODULE_PATH}@${RELEASE_TAG}"
+          for attempt in 1 2 3 4 5; do
+            if GOPROXY=proxy.golang.org go list -m "$module_version"; then
+              exit 0
+            fi
+
+            if [ "$attempt" = "5" ]; then
+              exit 1
+            fi
+
+            sleep 10
+          done
