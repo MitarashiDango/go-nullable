@@ -262,6 +262,8 @@ func TestUInt64_Equal(t *testing.T) {
 }
 
 func TestFloat32_Equal(t *testing.T) {
+	negativeZero := float32(math.Copysign(0, -1))
+	nan := float32(math.NaN())
 	tests := []struct {
 		name     string
 		v1       nullable.Float32
@@ -273,6 +275,8 @@ func TestFloat32_Equal(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewFloat32(1.23), nullable.NewFloat32(4.56), false},
 		{"ValidAndNull", nullable.NewFloat32(1.23), nullable.NewNullFloat32(), false},
 		{"NullAndValid", nullable.NewNullFloat32(), nullable.NewFloat32(1.23), false},
+		{"SignedZero", nullable.NewFloat32(0), nullable.NewFloat32(negativeZero), true},
+		{"NaN", nullable.NewFloat32(nan), nullable.NewFloat32(nan), false},
 	}
 
 	for _, tt := range tests {
@@ -285,6 +289,8 @@ func TestFloat32_Equal(t *testing.T) {
 }
 
 func TestFloat64_Equal(t *testing.T) {
+	negativeZero := math.Copysign(0, -1)
+	nan := math.NaN()
 	tests := []struct {
 		name     string
 		v1       nullable.Float64
@@ -296,6 +302,8 @@ func TestFloat64_Equal(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewFloat64(1.23), nullable.NewFloat64(4.56), false},
 		{"ValidAndNull", nullable.NewFloat64(1.23), nullable.NewNullFloat64(), false},
 		{"NullAndValid", nullable.NewNullFloat64(), nullable.NewFloat64(1.23), false},
+		{"SignedZero", nullable.NewFloat64(0), nullable.NewFloat64(negativeZero), true},
+		{"NaN", nullable.NewFloat64(nan), nullable.NewFloat64(nan), false},
 	}
 
 	for _, tt := range tests {
@@ -333,6 +341,7 @@ func TestBool_Equal(t *testing.T) {
 func TestTime_Equal(t *testing.T) {
 	t1 := time.Date(2025, 6, 1, 12, 0, 0, 0, time.UTC)
 	t2 := time.Date(2025, 6, 2, 12, 0, 0, 0, time.UTC)
+	t1InJST := t1.In(time.FixedZone("JST", 9*60*60))
 
 	tests := []struct {
 		name     string
@@ -345,6 +354,7 @@ func TestTime_Equal(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewTime(t1), nullable.NewTime(t2), false},
 		{"ValidAndNull", nullable.NewTime(t1), nullable.NewNullTime(), false},
 		{"NullAndValid", nullable.NewNullTime(), nullable.NewTime(t1), false},
+		{"SameInstantDifferentLocation", nullable.NewTime(t1), nullable.NewTime(t1InJST), true},
 	}
 
 	for _, tt := range tests {
@@ -357,6 +367,9 @@ func TestTime_Equal(t *testing.T) {
 }
 
 func TestFloat32_EqualBits(t *testing.T) {
+	negativeZero := float32(math.Copysign(0, -1))
+	nan1 := math.Float32frombits(0x7fc00001)
+	nan2 := math.Float32frombits(0x7fc00002)
 	tests := []struct {
 		name     string
 		v1       nullable.Float32
@@ -367,7 +380,9 @@ func TestFloat32_EqualBits(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewFloat32(1.23), nullable.NewFloat32(4.56), false},
 		{"BothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), true},
 		{"OneNull", nullable.NewFloat32(1.23), nullable.NewNullFloat32(), false},
-		{"NaN", nullable.NewFloat32(float32(math.NaN())), nullable.NewFloat32(float32(math.NaN())), true},
+		{"SignedZero", nullable.NewFloat32(0), nullable.NewFloat32(negativeZero), false},
+		{"SameNaNBits", nullable.NewFloat32(nan1), nullable.NewFloat32(nan1), true},
+		{"DifferentNaNBits", nullable.NewFloat32(nan1), nullable.NewFloat32(nan2), false},
 	}
 
 	for _, tt := range tests {
@@ -380,6 +395,9 @@ func TestFloat32_EqualBits(t *testing.T) {
 }
 
 func TestFloat64_EqualBits(t *testing.T) {
+	negativeZero := math.Copysign(0, -1)
+	nan1 := math.Float64frombits(0x7ff8000000000001)
+	nan2 := math.Float64frombits(0x7ff8000000000002)
 	tests := []struct {
 		name     string
 		v1       nullable.Float64
@@ -390,7 +408,9 @@ func TestFloat64_EqualBits(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewFloat64(1.23), nullable.NewFloat64(4.56), false},
 		{"BothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), true},
 		{"OneNull", nullable.NewFloat64(1.23), nullable.NewNullFloat64(), false},
-		{"NaN", nullable.NewFloat64(math.NaN()), nullable.NewFloat64(math.NaN()), true},
+		{"SignedZero", nullable.NewFloat64(0), nullable.NewFloat64(negativeZero), false},
+		{"SameNaNBits", nullable.NewFloat64(nan1), nullable.NewFloat64(nan1), true},
+		{"DifferentNaNBits", nullable.NewFloat64(nan1), nullable.NewFloat64(nan2), false},
 	}
 
 	for _, tt := range tests {
