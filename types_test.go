@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/MitarashiDango/go-nullable/v2"
+	"github.com/MitarashiDango/go-nullable/v3"
 )
 
 func TestString_Equal(t *testing.T) {
@@ -262,6 +262,8 @@ func TestUInt64_Equal(t *testing.T) {
 }
 
 func TestFloat32_Equal(t *testing.T) {
+	negativeZero := float32(math.Copysign(0, -1))
+	nan := float32(math.NaN())
 	tests := []struct {
 		name     string
 		v1       nullable.Float32
@@ -273,6 +275,8 @@ func TestFloat32_Equal(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewFloat32(1.23), nullable.NewFloat32(4.56), false},
 		{"ValidAndNull", nullable.NewFloat32(1.23), nullable.NewNullFloat32(), false},
 		{"NullAndValid", nullable.NewNullFloat32(), nullable.NewFloat32(1.23), false},
+		{"SignedZero", nullable.NewFloat32(0), nullable.NewFloat32(negativeZero), true},
+		{"NaN", nullable.NewFloat32(nan), nullable.NewFloat32(nan), false},
 	}
 
 	for _, tt := range tests {
@@ -285,6 +289,8 @@ func TestFloat32_Equal(t *testing.T) {
 }
 
 func TestFloat64_Equal(t *testing.T) {
+	negativeZero := math.Copysign(0, -1)
+	nan := math.NaN()
 	tests := []struct {
 		name     string
 		v1       nullable.Float64
@@ -296,6 +302,8 @@ func TestFloat64_Equal(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewFloat64(1.23), nullable.NewFloat64(4.56), false},
 		{"ValidAndNull", nullable.NewFloat64(1.23), nullable.NewNullFloat64(), false},
 		{"NullAndValid", nullable.NewNullFloat64(), nullable.NewFloat64(1.23), false},
+		{"SignedZero", nullable.NewFloat64(0), nullable.NewFloat64(negativeZero), true},
+		{"NaN", nullable.NewFloat64(nan), nullable.NewFloat64(nan), false},
 	}
 
 	for _, tt := range tests {
@@ -333,6 +341,7 @@ func TestBool_Equal(t *testing.T) {
 func TestTime_Equal(t *testing.T) {
 	t1 := time.Date(2025, 6, 1, 12, 0, 0, 0, time.UTC)
 	t2 := time.Date(2025, 6, 2, 12, 0, 0, 0, time.UTC)
+	t1InJST := t1.In(time.FixedZone("JST", 9*60*60))
 
 	tests := []struct {
 		name     string
@@ -345,6 +354,7 @@ func TestTime_Equal(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewTime(t1), nullable.NewTime(t2), false},
 		{"ValidAndNull", nullable.NewTime(t1), nullable.NewNullTime(), false},
 		{"NullAndValid", nullable.NewNullTime(), nullable.NewTime(t1), false},
+		{"SameInstantDifferentLocation", nullable.NewTime(t1), nullable.NewTime(t1InJST), true},
 	}
 
 	for _, tt := range tests {
@@ -357,6 +367,9 @@ func TestTime_Equal(t *testing.T) {
 }
 
 func TestFloat32_EqualBits(t *testing.T) {
+	negativeZero := float32(math.Copysign(0, -1))
+	nan1 := math.Float32frombits(0x7fc00001)
+	nan2 := math.Float32frombits(0x7fc00002)
 	tests := []struct {
 		name     string
 		v1       nullable.Float32
@@ -367,7 +380,9 @@ func TestFloat32_EqualBits(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewFloat32(1.23), nullable.NewFloat32(4.56), false},
 		{"BothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), true},
 		{"OneNull", nullable.NewFloat32(1.23), nullable.NewNullFloat32(), false},
-		{"NaN", nullable.NewFloat32(float32(math.NaN())), nullable.NewFloat32(float32(math.NaN())), true},
+		{"SignedZero", nullable.NewFloat32(0), nullable.NewFloat32(negativeZero), false},
+		{"SameNaNBits", nullable.NewFloat32(nan1), nullable.NewFloat32(nan1), true},
+		{"DifferentNaNBits", nullable.NewFloat32(nan1), nullable.NewFloat32(nan2), false},
 	}
 
 	for _, tt := range tests {
@@ -380,6 +395,9 @@ func TestFloat32_EqualBits(t *testing.T) {
 }
 
 func TestFloat64_EqualBits(t *testing.T) {
+	negativeZero := math.Copysign(0, -1)
+	nan1 := math.Float64frombits(0x7ff8000000000001)
+	nan2 := math.Float64frombits(0x7ff8000000000002)
 	tests := []struct {
 		name     string
 		v1       nullable.Float64
@@ -390,7 +408,9 @@ func TestFloat64_EqualBits(t *testing.T) {
 		{"BothValid_DifferentValue", nullable.NewFloat64(1.23), nullable.NewFloat64(4.56), false},
 		{"BothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), true},
 		{"OneNull", nullable.NewFloat64(1.23), nullable.NewNullFloat64(), false},
-		{"NaN", nullable.NewFloat64(math.NaN()), nullable.NewFloat64(math.NaN()), true},
+		{"SignedZero", nullable.NewFloat64(0), nullable.NewFloat64(negativeZero), false},
+		{"SameNaNBits", nullable.NewFloat64(nan1), nullable.NewFloat64(nan1), true},
+		{"DifferentNaNBits", nullable.NewFloat64(nan1), nullable.NewFloat64(nan2), false},
 	}
 
 	for _, tt := range tests {
@@ -403,6 +423,11 @@ func TestFloat64_EqualBits(t *testing.T) {
 }
 
 func TestFloat32_EqualEpsilon(t *testing.T) {
+	nan := float32(math.NaN())
+	maxFloat := float32(math.MaxFloat32)
+	negativeZero := float32(math.Copysign(0, -1))
+	positiveInfinity := float32(math.Inf(1))
+	negativeInfinity := float32(math.Inf(-1))
 	tests := []struct {
 		name     string
 		v1       nullable.Float32
@@ -415,8 +440,23 @@ func TestFloat32_EqualEpsilon(t *testing.T) {
 		{"ExactBoundary", nullable.NewFloat32(1.0), nullable.NewFloat32(1.5), 0.5, true},
 		{"ZeroEpsilonSameValue", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0), 0, true},
 		{"ZeroEpsilonDifferentValue", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0001), 0, false},
+		{"NegativeZeroEpsilonSameValue", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0), negativeZero, true},
+		{"NegativeZeroEpsilonDifferentValue", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0001), negativeZero, false},
 		{"BothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), 0.001, true},
 		{"OneNull", nullable.NewFloat32(1.0), nullable.NewNullFloat32(), 0.001, false},
+		{"NullAndValue", nullable.NewNullFloat32(), nullable.NewFloat32(1.0), 0.001, false},
+		{"NaNAndValue", nullable.NewFloat32(nan), nullable.NewFloat32(1.0), 0.001, false},
+		{"ValueAndNaN", nullable.NewFloat32(1.0), nullable.NewFloat32(nan), 0.001, false},
+		{"NaNAndNaN", nullable.NewFloat32(nan), nullable.NewFloat32(nan), 0, false},
+		{"SamePositiveInfinity", nullable.NewFloat32(positiveInfinity), nullable.NewFloat32(positiveInfinity), 0, true},
+		{"SameNegativeInfinity", nullable.NewFloat32(negativeInfinity), nullable.NewFloat32(negativeInfinity), 0, true},
+		{"InfinityAndFinite", nullable.NewFloat32(positiveInfinity), nullable.NewFloat32(1.0), maxFloat, false},
+		{"FiniteAndInfinity", nullable.NewFloat32(1.0), nullable.NewFloat32(positiveInfinity), maxFloat, false},
+		{
+			"OppositeInfinities",
+			nullable.NewFloat32(positiveInfinity), nullable.NewFloat32(negativeInfinity), maxFloat, false,
+		},
+		{"FiniteDifferenceOverflow", nullable.NewFloat32(maxFloat), nullable.NewFloat32(-maxFloat), maxFloat, false},
 	}
 
 	for _, tt := range tests {
@@ -431,22 +471,34 @@ func TestFloat32_EqualEpsilon(t *testing.T) {
 func TestFloat32_EqualEpsilon_InvalidEpsilonPanics(t *testing.T) {
 	tests := []struct {
 		name    string
+		v1      nullable.Float32
+		v2      nullable.Float32
 		epsilon float32
 	}{
-		{"Negative", -0.001},
-		{"NaN", float32(math.NaN())},
+		{"Negative", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0), -0.001},
+		{"NaN", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0), float32(math.NaN())},
+		{"PositiveInfinity", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0), float32(math.Inf(1))},
+		{"NegativeInfinity", nullable.NewFloat32(1.0), nullable.NewFloat32(1.0), float32(math.Inf(-1))},
+		{"NegativeBothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), -0.001},
+		{"NaNBothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), float32(math.NaN())},
+		{"InfinityBothNull", nullable.NewNullFloat32(), nullable.NewNullFloat32(), float32(math.Inf(1))},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assertPanics(t, func() {
-				nullable.NewFloat32(1.0).EqualEpsilon(nullable.NewFloat32(1.0), tt.epsilon)
+				tt.v1.EqualEpsilon(tt.v2, tt.epsilon)
 			})
 		})
 	}
 }
 
 func TestFloat64_EqualEpsilon(t *testing.T) {
+	nan := math.NaN()
+	maxFloat := math.MaxFloat64
+	negativeZero := math.Copysign(0, -1)
+	positiveInfinity := math.Inf(1)
+	negativeInfinity := math.Inf(-1)
 	tests := []struct {
 		name     string
 		v1       nullable.Float64
@@ -459,8 +511,23 @@ func TestFloat64_EqualEpsilon(t *testing.T) {
 		{"ExactBoundary", nullable.NewFloat64(1.0), nullable.NewFloat64(1.5), 0.5, true},
 		{"ZeroEpsilonSameValue", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0), 0, true},
 		{"ZeroEpsilonDifferentValue", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0000001), 0, false},
+		{"NegativeZeroEpsilonSameValue", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0), negativeZero, true},
+		{"NegativeZeroEpsilonDifferentValue", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0000001), negativeZero, false},
 		{"BothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), 0.001, true},
 		{"OneNull", nullable.NewFloat64(1.0), nullable.NewNullFloat64(), 0.001, false},
+		{"NullAndValue", nullable.NewNullFloat64(), nullable.NewFloat64(1.0), 0.001, false},
+		{"NaNAndValue", nullable.NewFloat64(nan), nullable.NewFloat64(1.0), 0.001, false},
+		{"ValueAndNaN", nullable.NewFloat64(1.0), nullable.NewFloat64(nan), 0.001, false},
+		{"NaNAndNaN", nullable.NewFloat64(nan), nullable.NewFloat64(nan), 0, false},
+		{"SamePositiveInfinity", nullable.NewFloat64(positiveInfinity), nullable.NewFloat64(positiveInfinity), 0, true},
+		{"SameNegativeInfinity", nullable.NewFloat64(negativeInfinity), nullable.NewFloat64(negativeInfinity), 0, true},
+		{"InfinityAndFinite", nullable.NewFloat64(positiveInfinity), nullable.NewFloat64(1.0), maxFloat, false},
+		{"FiniteAndInfinity", nullable.NewFloat64(1.0), nullable.NewFloat64(positiveInfinity), maxFloat, false},
+		{
+			"OppositeInfinities",
+			nullable.NewFloat64(positiveInfinity), nullable.NewFloat64(negativeInfinity), maxFloat, false,
+		},
+		{"FiniteDifferenceOverflow", nullable.NewFloat64(maxFloat), nullable.NewFloat64(-maxFloat), maxFloat, false},
 	}
 
 	for _, tt := range tests {
@@ -475,16 +542,23 @@ func TestFloat64_EqualEpsilon(t *testing.T) {
 func TestFloat64_EqualEpsilon_InvalidEpsilonPanics(t *testing.T) {
 	tests := []struct {
 		name    string
+		v1      nullable.Float64
+		v2      nullable.Float64
 		epsilon float64
 	}{
-		{"Negative", -0.001},
-		{"NaN", math.NaN()},
+		{"Negative", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0), -0.001},
+		{"NaN", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0), math.NaN()},
+		{"PositiveInfinity", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0), math.Inf(1)},
+		{"NegativeInfinity", nullable.NewFloat64(1.0), nullable.NewFloat64(1.0), math.Inf(-1)},
+		{"NegativeBothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), -0.001},
+		{"NaNBothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), math.NaN()},
+		{"InfinityBothNull", nullable.NewNullFloat64(), nullable.NewNullFloat64(), math.Inf(1)},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assertPanics(t, func() {
-				nullable.NewFloat64(1.0).EqualEpsilon(nullable.NewFloat64(1.0), tt.epsilon)
+				tt.v1.EqualEpsilon(tt.v2, tt.epsilon)
 			})
 		})
 	}

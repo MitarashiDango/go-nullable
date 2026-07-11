@@ -22,11 +22,17 @@ type NullableBase[T any] struct {
 }
 
 // Value returns nil for null values, otherwise the converted driver value.
+// It returns nil and an error if the value cannot be converted.
 func (nv NullableBase[T]) Value() (driver.Value, error) {
 	if !nv.valid {
 		return nil, nil
 	}
-	return driver.DefaultParameterConverter.ConvertValue(nv.value)
+
+	value, err := driver.DefaultParameterConverter.ConvertValue(nv.value)
+	if err != nil {
+		return nil, err
+	}
+	return value, nil
 }
 
 // RawValue returns the stored value without checking whether it is null.

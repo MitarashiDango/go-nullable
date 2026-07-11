@@ -297,6 +297,26 @@ type Byte = UInt8
 // Rune is an alias for Int32.
 type Rune = Int32
 
+// equalEpsilon implements the shared comparison contract for Float32 and Float64.
+// NaN values never compare equal, equal infinities do, and both signs of zero are valid epsilon values.
+// It panics unless epsilon is finite and non-negative.
+func equalEpsilon[T ~float32 | ~float64](nv, value NullableBase[T], epsilon T) bool {
+	if epsilon < 0 || math.IsNaN(float64(epsilon)) || math.IsInf(float64(epsilon), 0) {
+		panic("nullable: invalid epsilon")
+	}
+
+	if nv.IsNull() != value.IsNull() {
+		return false
+	}
+
+	if nv.IsNull() {
+		return true
+	}
+
+	nvValue, valueValue := nv.RawValue(), value.RawValue()
+	return nvValue == valueValue || math.Abs(float64(nvValue-valueValue)) <= float64(epsilon)
+}
+
 // Float32 represents a nullable float32.
 type Float32 struct {
 	NullableBase[float32]
@@ -333,25 +353,11 @@ func (nv Float32) EqualBits(value Float32) bool {
 }
 
 // EqualEpsilon reports whether nv and value are both null or differ by at most epsilon.
-// It panics if epsilon is negative or NaN.
+// NaN values never compare equal, while equal infinities do.
+// Positive and negative zero are both accepted as epsilon.
+// It panics unless epsilon is finite and non-negative.
 func (nv Float32) EqualEpsilon(value Float32, epsilon float32) bool {
-	if epsilon < 0 || math.IsNaN(float64(epsilon)) {
-		panic("nullable: invalid epsilon")
-	}
-
-	if nv.IsNull() != value.IsNull() {
-		return false
-	}
-
-	if nv.IsNull() {
-		return true
-	}
-
-	diff := nv.RawValue() - value.RawValue()
-	if diff < 0 {
-		diff = -diff
-	}
-	return diff <= epsilon
+	return equalEpsilon(nv.NullableBase, value.NullableBase, epsilon)
 }
 
 // Float64 represents a nullable float64.
@@ -390,21 +396,11 @@ func (nv Float64) EqualBits(value Float64) bool {
 }
 
 // EqualEpsilon reports whether nv and value are both null or differ by at most epsilon.
-// It panics if epsilon is negative or NaN.
+// NaN values never compare equal, while equal infinities do.
+// Positive and negative zero are both accepted as epsilon.
+// It panics unless epsilon is finite and non-negative.
 func (nv Float64) EqualEpsilon(value Float64, epsilon float64) bool {
-	if epsilon < 0 || math.IsNaN(epsilon) {
-		panic("nullable: invalid epsilon")
-	}
-
-	if nv.IsNull() != value.IsNull() {
-		return false
-	}
-
-	if nv.IsNull() {
-		return true
-	}
-
-	return math.Abs(nv.RawValue()-value.RawValue()) <= epsilon
+	return equalEpsilon(nv.NullableBase, value.NullableBase, epsilon)
 }
 
 // Bool represents a nullable bool.
