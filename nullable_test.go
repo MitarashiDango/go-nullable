@@ -4,11 +4,41 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
+	"errors"
+	"reflect"
 	"testing"
 	"time"
 
 	"github.com/MitarashiDango/go-nullable/v2"
 )
+
+var (
+	_ sql.Scanner      = (*nullable.NullableBase[string])(nil)
+	_ driver.Valuer    = nullable.NullableBase[string]{}
+	_ json.Marshaler   = nullable.NullableBase[string]{}
+	_ json.Unmarshaler = (*nullable.NullableBase[string])(nil)
+	_ sql.Scanner      = (*nullable.String)(nil)
+	_ driver.Valuer    = nullable.String{}
+	_ json.Marshaler   = nullable.String{}
+	_ json.Unmarshaler = (*nullable.String)(nil)
+)
+
+type sqlNullable interface {
+	sql.Scanner
+	driver.Valuer
+}
+
+func pointerTo[T any](value T) *T {
+	return &value
+}
+
+var errMarshalJSON = errors.New("marshal JSON error")
+
+type marshalJSONErrorValue struct{}
+
+func (marshalJSONErrorValue) MarshalJSON() ([]byte, error) {
+	return nil, errMarshalJSON
+}
 
 func TestNullableBase_IsNull_InitValue(t *testing.T) {
 	var s nullable.String
@@ -105,6 +135,19 @@ func TestNullableBase_SetNull(t *testing.T) {
 	}
 }
 
+func TestNullableBase_SetNull_ClearsReferenceValue(t *testing.T) {
+	value := nullable.NewNullableBase([]byte("test"))
+
+	value.SetNull()
+
+	if value.RawValue() != nil {
+		t.Fatalf("expected the stored slice to be nil, got %v", value.RawValue())
+	}
+	if !value.IsNull() {
+		t.Fatal("expected IsNull() to be true")
+	}
+}
+
 func TestNullableBase_SqlNull_Valid(t *testing.T) {
 	var value nullable.String
 	value.SetValue("test value")
@@ -160,14 +203,39 @@ func TestNullableBase_SetSqlNull_Null(t *testing.T) {
 }
 
 func TestNullableBase_Value_Valid(t *testing.T) {
-	s := nullable.NewString("test")
-
-	v, err := s.Value()
-	if err != nil {
-		t.Fatalf("Value() returned error: %v", err)
+	tv := time.Date(2025, 6, 1, 12, 30, 45, 0, time.UTC)
+	tests := []struct {
+		name     string
+		value    driver.Valuer
+		expected driver.Value
+	}{
+		{"String", nullable.NewString("test"), "test"},
+		{"Int", nullable.NewInt(-123), int64(-123)},
+		{"UInt", nullable.NewUInt(123), int64(123)},
+		{"Int8", nullable.NewInt8(-123), int64(-123)},
+		{"UInt8", nullable.NewUInt8(123), int64(123)},
+		{"Int16", nullable.NewInt16(-123), int64(-123)},
+		{"UInt16", nullable.NewUInt16(123), int64(123)},
+		{"Int32", nullable.NewInt32(-123), int64(-123)},
+		{"UInt32", nullable.NewUInt32(123), int64(123)},
+		{"Int64", nullable.NewInt64(-123), int64(-123)},
+		{"UInt64", nullable.NewUInt64(123), int64(123)},
+		{"Float32", nullable.NewFloat32(-123.456), float64(float32(-123.456))},
+		{"Float64", nullable.NewFloat64(-123.456), float64(-123.456)},
+		{"Bool", nullable.NewBool(true), true},
+		{"Time", nullable.NewTime(tv), tv},
 	}
-	if v != "test" {
-		t.Fatalf("expected %q, got %v", "test", v)
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual, err := tt.value.Value()
+			if err != nil {
+				t.Fatalf("Value() returned error: %v", err)
+			}
+			if actual != tt.expected {
+				t.Fatalf("expected %v (%T), got %v (%T)", tt.expected, tt.expected, actual, actual)
+			}
+		})
 	}
 }
 
@@ -206,16 +274,47 @@ func TestNullableBase_Value_Error(t *testing.T) {
 }
 
 func TestNullableBase_Scan_Valid(t *testing.T) {
-	var s nullable.String
-	if err := s.Scan("test"); err != nil {
-		t.Fatalf("Scan() returned error: %v", err)
+	tv := time.Date(2025, 6, 1, 12, 30, 45, 0, time.UTC)
+	tests := []struct {
+		name          string
+		target        sqlNullable
+		source        driver.Value
+		expected      driver.Value
+		expectedState any
+	}{
+		{"StringFromString", &nullable.String{}, "test", "test", pointerTo(nullable.NewString("test"))},
+		{"StringFromBytes", &nullable.String{}, []byte("test"), "test", pointerTo(nullable.NewString("test"))},
+		{"IntFromInt64", &nullable.Int{}, int64(-123), int64(-123), pointerTo(nullable.NewInt(-123))},
+		{"UIntFromInt64", &nullable.UInt{}, int64(123), int64(123), pointerTo(nullable.NewUInt(123))},
+		{
+			"Float32FromFloat64", &nullable.Float32{}, float64(1.25), float64(1.25),
+			pointerTo(nullable.NewFloat32(1.25)),
+		},
+		{
+			"Float64FromFloat64", &nullable.Float64{}, float64(1.25), float64(1.25),
+			pointerTo(nullable.NewFloat64(1.25)),
+		},
+		{"BoolFromBool", &nullable.Bool{}, true, true, pointerTo(nullable.NewBool(true))},
+		{"TimeFromTime", &nullable.Time{}, tv, tv, pointerTo(nullable.NewTime(tv))},
 	}
 
-	if s.IsNull() {
-		t.Fatal("expected IsNull() to be false")
-	}
-	if s.RawValue() != "test" {
-		t.Fatalf("expected %q, got %q", "test", s.RawValue())
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.target.Scan(tt.source); err != nil {
+				t.Fatalf("Scan() returned error: %v", err)
+			}
+			if !reflect.DeepEqual(tt.target, tt.expectedState) {
+				t.Fatalf("expected stored state %v, got %v", tt.expectedState, tt.target)
+			}
+
+			actual, err := tt.target.Value()
+			if err != nil {
+				t.Fatalf("Value() returned error: %v", err)
+			}
+			if actual != tt.expected {
+				t.Fatalf("expected %v (%T), got %v (%T)", tt.expected, tt.expected, actual, actual)
+			}
+		})
 	}
 }
 
@@ -230,6 +329,41 @@ func TestNullableBase_Scan_Null(t *testing.T) {
 	if !s.IsNull() {
 		t.Fatal("expected IsNull() to be true")
 	}
+	if s.RawValue() != "" {
+		t.Fatalf("expected the stored value to be cleared, got %q", s.RawValue())
+	}
+}
+
+func TestNullableBase_Scan_ErrorPreservesState(t *testing.T) {
+	t.Run("UnsupportedType", func(t *testing.T) {
+		value := nullable.NewString("before")
+		if err := value.Scan(struct{}{}); err == nil {
+			t.Fatal("expected Scan() to return an error")
+		}
+		if !value.Equal(nullable.NewString("before")) {
+			t.Fatalf("expected the original value to be preserved, got %v", value)
+		}
+	})
+
+	t.Run("IntegerOverflow", func(t *testing.T) {
+		value := nullable.NewInt8(12)
+		if err := value.Scan(int64(128)); err == nil {
+			t.Fatal("expected Scan() to return an error")
+		}
+		if !value.Equal(nullable.NewInt8(12)) {
+			t.Fatalf("expected the original value to be preserved, got %v", value)
+		}
+	})
+
+	t.Run("NegativeUnsignedInteger", func(t *testing.T) {
+		value := nullable.NewUInt(12)
+		if err := value.Scan(int64(-1)); err == nil {
+			t.Fatal("expected Scan() to return an error")
+		}
+		if !value.Equal(nullable.NewUInt(12)) {
+			t.Fatalf("expected the original value to be preserved, got %v", value)
+		}
+	})
 }
 
 func TestNullableBase_MarshalJSON_ValidValue(t *testing.T) {
@@ -367,6 +501,15 @@ func TestNullableBase_MarshalJSON_Null(t *testing.T) {
 				t.Fatalf("expected: %v, actual: %v", expected, string(actual))
 			}
 		})
+	}
+}
+
+func TestNullableBase_MarshalJSON_Error(t *testing.T) {
+	value := nullable.NewNullableBase(marshalJSONErrorValue{})
+
+	_, err := value.MarshalJSON()
+	if !errors.Is(err, errMarshalJSON) {
+		t.Fatalf("expected %v, got %v", errMarshalJSON, err)
 	}
 }
 
@@ -575,4 +718,40 @@ func TestNullableBase_UnmarshalJSON_Null(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestNullableBase_UnmarshalJSON_NullClearsValue(t *testing.T) {
+	value := nullable.NewString("before")
+
+	if err := json.Unmarshal([]byte("null"), &value); err != nil {
+		t.Fatalf("json.Unmarshal failed: %v", err)
+	}
+	if !value.IsNull() {
+		t.Fatal("expected IsNull() to be true")
+	}
+	if value.RawValue() != "" {
+		t.Fatalf("expected the stored value to be cleared, got %q", value.RawValue())
+	}
+}
+
+func TestNullableBase_UnmarshalJSON_ErrorPreservesState(t *testing.T) {
+	t.Run("TypeMismatch", func(t *testing.T) {
+		value := nullable.NewString("before")
+		if err := json.Unmarshal([]byte("123"), &value); err == nil {
+			t.Fatal("expected json.Unmarshal to return an error")
+		}
+		if !value.Equal(nullable.NewString("before")) {
+			t.Fatalf("expected the original value to be preserved, got %v", value)
+		}
+	})
+
+	t.Run("IntegerOverflow", func(t *testing.T) {
+		value := nullable.NewInt8(12)
+		if err := json.Unmarshal([]byte("128"), &value); err == nil {
+			t.Fatal("expected json.Unmarshal to return an error")
+		}
+		if !value.Equal(nullable.NewInt8(12)) {
+			t.Fatalf("expected the original value to be preserved, got %v", value)
+		}
+	})
 }
