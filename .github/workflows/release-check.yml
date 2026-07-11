@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag to check, such as v2.0.0"
+        description: "Tag to check, such as v3.0.0"
         required: true
         type: string
 
@@ -41,7 +41,7 @@ jobs:
         run: |
           tag="$RELEASE_TAG"
           if ! printf '%s\n' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
-            echo "::error::tag must be a canonical Go module version like v2.0.0"
+            echo "::error::tag must be a canonical Go module version like v3.0.0"
             exit 1
           fi
 

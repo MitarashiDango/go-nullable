@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/MitarashiDango/go-nullable/v2"
+	"github.com/MitarashiDango/go-nullable/v3"
 )
 
 var (
