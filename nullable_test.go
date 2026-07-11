@@ -2,6 +2,7 @@ package nullable_test
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"encoding/json"
 	"testing"
 	"time"
@@ -179,6 +180,28 @@ func TestNullableBase_Value_Null(t *testing.T) {
 	}
 	if v != nil {
 		t.Fatalf("expected nil, got %v", v)
+	}
+}
+
+func TestNullableBase_Value_Error(t *testing.T) {
+	tests := []struct {
+		name  string
+		value driver.Valuer
+	}{
+		{"UInt64HighBitSet", nullable.NewUInt64(uint64(1) << 63)},
+		{"UnsupportedGenericType", nullable.NewNullableBase(struct{}{})},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual, err := tt.value.Value()
+			if err == nil {
+				t.Fatal("expected Value() to return an error")
+			}
+			if actual != nil {
+				t.Fatalf("expected nil value, got %v", actual)
+			}
+		})
 	}
 }
 
